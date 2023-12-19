@@ -2,77 +2,71 @@ package com.hotelreservation.rest.controller;
 
 import com.hotelreservation.api.dto.UserDTO;
 import com.hotelreservation.api.request.AddBalanceRequest;
+import com.hotelreservation.api.request.AuthUserRequest;
 import com.hotelreservation.api.request.UserAddRequest;
 import com.hotelreservation.api.request.UserLoginRequest;
+import com.hotelreservation.api.response.AuthUserResponse;
 import com.hotelreservation.api.response.BaseResponse;
 import com.hotelreservation.rest.exception.AuthException;
 import com.hotelreservation.rest.service.AuthService;
 import com.hotelreservation.rest.service.UserService;
 import com.hotelreservation.rest.validator.UserValidator;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static java.util.regex.Pattern.matches;
-
+//@RestController
 @Controller
 @RequiredArgsConstructor
-//@RequestMapping( "/users")
+@RequestMapping(path = "/auth")
 @Slf4j
+@CrossOrigin
 public class AuthController {
+
     private final UserService userService;
 
     private final UserValidator userValidator;
+
     private final AuthService authService;
-
-
-
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
 
     @GetMapping("/login")
     public String login() {
         return "oldlogin";
     }
-    @GetMapping("/users")
-    public String users(){
-        return "users";
-    }
+
     @GetMapping("/register")
-    public String register(){
+    public String register() {
         return "register";
     }
-    @GetMapping("/addbalance")
-    public String addbalance(){
-        return "addbalance";
-    }
+
+    //todo add mailsender.
 
     @PostMapping("/register")
-    public ResponseEntity<BaseResponse> createUser(@RequestBody UserAddRequest userAddRequest) throws AuthException {
+    public ResponseEntity<BaseResponse> createUser(@RequestBody @Valid UserAddRequest userAddRequest) throws AuthException {
         userValidator.validateUserRegister(userAddRequest);
         return ResponseEntity.ok(userService.createUser(userAddRequest));
     }
+
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse> loginUser (UserLoginRequest userLoginRequest) throws AuthException {
+    public ResponseEntity<AuthUserResponse> loginUser(@RequestBody @Valid AuthUserRequest userLoginRequest) throws AuthException {
         userValidator.authenticationUserLogin(userLoginRequest);
-        return ResponseEntity.ok(userService.login());
+        return ResponseEntity.ok(userService.authUser(userLoginRequest));
     }
 
     @GetMapping("/{userid}")
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable Long userid) {
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable @Valid Long userid) {
         log.info("controller is working well , userid : " + userid);
 
         return ResponseEntity.ok(userService.findUserById(userid));
     }
-
-    @PutMapping("/addbalance")
-    public ResponseEntity<BaseResponse> addBalance(AddBalanceRequest request){
-        return ResponseEntity.ok(authService.addBalanceRequest(request));
+    @GetMapping("/greeting")
+    public @ResponseBody String greeting(){
+        return authService.testingSomeThing();
     }
+
 }
 /*
 * @PostMapping("/login")

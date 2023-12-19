@@ -19,15 +19,15 @@ spring:
     open-in-view: false
   main:
     banner-mode: off
-#app:
-#  jwtSecret: S5arZ8qX8Anvk60LIHdGKZiGyLAyxW+LU1Xw2H4R6Uu1ndlUNPqhpVuKtFsfFvA+
-#  jwtCryptoSecret : sBnlg0BGosgPMQju
-#  routes:
-#    user:
-#      addBalance: /add-balance
-#    auth:
-#      createUser: /create-user
-#      authUser: /auth-user
+app:
+  jwtSecret: S5arZ8qX8Anvk60LIHdGKZiGyLAyxW+LU1Xw2H4R6Uu1ndlUNPqhpVuKtFsfFvA+
+  jwtCryptoSecret : sBnlg0BGosgPMQju
+  routes:
+    user:
+      addBalance: /add-balance
+    auth:
+      createUser: /create-user
+      authUser: /auth-user
 #    feignClient:
 #      name: UserServiceClient
 #      url:

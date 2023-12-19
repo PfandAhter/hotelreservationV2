@@ -14,7 +14,7 @@ CREATE TABLE `users` (
   `first_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
-  `role` varchar(45) DEFAULT NULL,
+  `role` ENUM('USER','MANAGER','ADMIN'),
   `password` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
@@ -41,28 +41,44 @@ CREATE TABLE `balance` (
 DROP TABLE IF EXISTS `rooms`;
 
 CREATE TABLE `rooms` (
-  `room_id` int NOT NULL AUTO_INCREMENT,
-  `floor` int DEFAULT NULL,
-  `roomsize` int DEFAULT NULL,
-  `price` int DEFAULT NULL,
-  `isAvabilable` varchar(45) DEFAULT FALSE,
-  PRIMARY KEY (`room_id`)
+`id` BIGINT NOT NULL AUTO_INCREMENT,
+`floor` int DEFAULT NULL,
+`roomsize` int DEFAULT NULL,
+`price` int DEFAULT NULL,
+`is_available` varchar(45) DEFAULT NULL,
+`member_1` varchar(45) DEFAULT NULL,
+`member_2` varchar(45) DEFAULT NULL,
+`member_3` varchar(45) DEFAULT NULL,
+`member_4` varchar(45) DEFAULT NULL,
+                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --
--- Room members learn how to many to many / one to many
+-- Inserting data for table `rooms`
+--
+
+INSERT INTO `rooms` VALUES
+(1,1,2,1000,'TRUE',2,3,6,11),
+(2,1,2,1000,'TRUE',2,3,6,11),
+(3,1,2,1000,'TRUE',2,3,6,11),
+(4,1,2,1000,'TRUE',2,3,6,11),
+(5,2,4,1500,'TRUE',2,3,6,11),
+(6,2,4,1500,'TRUE',2,3,6,11);
+
+--
+-- Reservationlist
 --
 
 DROP TABLE IF EXISTS `reservationlist`;
 
 CREATE TABLE `reservationlist` (
-  `res_id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `room_id` INT DEFAULT NULL ,
   `user_id` INT DEFAULT NULL,
   `entrydate` varchar(45) DEFAULT NULL,
   `departdate`varchar(45) DEFAULT NULL,
   `checkin` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`res_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --

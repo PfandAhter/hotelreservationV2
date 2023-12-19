@@ -24,7 +24,7 @@ public class SecurityConfiguration {
 
     // todo 1:30:27
 
-
+    @SuppressWarnings({"Convert2MethodRef", "LambdaBodyCanBeCodeBlock"})
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.csrf(configure -> configure
