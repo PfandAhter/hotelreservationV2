@@ -13,15 +13,16 @@ import com.hotelreservation.rest.exception.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class UserValidator {
 
     private final UserRepository userRepository;
+
     private final BcryptGenerator bcryptGenerator;
+
     private final RoomRepository roomRepository;
+
     private final BalanceRepository balanceRepository;
 
 
@@ -34,24 +35,28 @@ public class UserValidator {
     }
 
     public void authenticationUserLogin(AuthUserRequest userLoginRequest) throws AuthException {
-        User user = userRepository.findByUsername(userLoginRequest.getUsername());
-
-        String currentUserPassword = userLoginRequest.getPassword();
+//        User user = userRepository.findByUsername(userLoginRequest.getUsername());
 
         if (userRepository.findByUsername(userLoginRequest.getUsername()) == null) {
             throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
-        }else if(user.getUsername().isEmpty() || !(bcryptGenerator.passwordDecoder(currentUserPassword, user.getPassword()))) {
+
+            //user.getPassword()
+        }else if(userRepository.findByUsername(userLoginRequest.getUsername()).getUsername().isEmpty() ||
+                !(bcryptGenerator.passwordDecoder(userLoginRequest.getPassword(),
+                        userRepository.findByUsername(userLoginRequest.getUsername()).getPassword()))) {
+            throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
+        }else if (bcryptGenerator.passwordDecoder(userLoginRequest.getPassword(),userRepository.findByUsername(userLoginRequest.getUsername()).getPassword())){
             throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
         }
     }
 
     public void changeRolePermission(ChangeRoleRequest changeRoleRequest) throws AuthException {
-        User user = userRepository.findByUsername(changeRoleRequest.getAdminUsername());
+//        User user = userRepository.findByUsername(changeRoleRequest.getAdminUsername());
 
         if (userRepository.findByUsername(changeRoleRequest.getAdminUsername()) == null) {
             throw new AuthException(Constants.ACCESS_DENIED);
         }
-        else if (user.getRole() != Role.ADMIN) {
+        else if (userRepository.findByUsername(changeRoleRequest.getAdminUsername()).getRole() != Role.ADMIN) {
             throw new AuthException(Constants.ACCESS_DENIED);
         }
     }
@@ -83,4 +88,8 @@ public class UserValidator {
 //        }
 
     }
+
+//    public AuthException responseException() throws AuthException{
+//        throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
+//    }
 }

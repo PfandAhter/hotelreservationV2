@@ -9,6 +9,7 @@ import com.hotelreservation.auth.JwtService;
 import com.hotelreservation.model.Role;
 import com.hotelreservation.model.entity.User;
 import com.hotelreservation.repository.UserRepository;
+import com.hotelreservation.rest.config.BcryptGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,10 +34,13 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
 
+
+
     public BaseResponse createUser(UserAddRequest createUser) {
         log.info("User saved / updated : " + createUser.getUsername());
         User user = modelMapper.map(createUser, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         if(createUser.getUsername().equals("Pfand") && createUser.getFirstName().equals("Ataberk") && createUser.getLastName().equals("Bakir")){
             user.setRole(Role.MANAGER);
         }else{
@@ -56,6 +60,7 @@ public class UserService {
     public AuthUserResponse authUser(AuthUserRequest authUserRequest){
         log.info(String.format("username %s password %s", authUserRequest.getUsername(), authUserRequest.getPassword()));
         User user = userRepository.findByUsername(authUserRequest.getUsername());
+
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authUserRequest.getUsername(), authUserRequest.getPassword()));
