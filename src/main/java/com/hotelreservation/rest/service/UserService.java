@@ -33,6 +33,8 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
+//    private final AuthUserResponse authUserResponse;
+//    private final AuthToken authToken;
 
 
 
@@ -66,11 +68,21 @@ public class UserService {
                 new UsernamePasswordAuthenticationToken(authUserRequest.getUsername(), authUserRequest.getPassword()));
 
         String token = jwtService.generateToken(user);
+//        authUserResponse.setToken(token);
+//        authUserResponse.getToken();
+
+//        authToken.setToken(token);
+//        authToken.getToken();
+
 
         return AuthUserResponse.builder()
                 .token(token)
                 .build();
     }
+
+    /*public Boolean verifyToken(String token){
+        User user =
+    }*/
 
     public UserDTO findUserById(Long userid) {
         return modelMapper.map(userRepository.findUserById(userid), UserDTO.class);

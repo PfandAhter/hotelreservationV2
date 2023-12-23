@@ -3,6 +3,7 @@ package com.hotelreservation.auth;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,19 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@WebFilter(filterName = "RequestCachingFilter", urlPatterns = "/auth/*")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     private final UserDetailsService userDetailsService;
 
+    //TODO WELL FUCKING DONE BRO YOU DOING WELL........................
+    //https://www.baeldung.com/spring-exclude-filter
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+        String path = request.getRequestURI();
+        return "/auth/login".equals(path) || "/auth/register".equals(path);
+    }
 
     @Override
     protected void doFilterInternal(
@@ -32,6 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+//        final String path = request.getRequestURI();
+//        if("/auth/login".equals(path)){
+//            filterChain.doFilter(request,response);
+//            return;
+//        }
         final String authHeader = request.getHeader("Authorization");
         String jwt = "";
         final String username;
@@ -67,6 +80,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+
 }
 /*if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

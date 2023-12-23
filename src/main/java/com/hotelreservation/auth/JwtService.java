@@ -31,10 +31,6 @@ public class JwtService {
 
 
     private final Environment environment;
-
-
-    //todo 1:08:00
-
     @Value(JWT_SECRET)
     private String jwtSecret;
 

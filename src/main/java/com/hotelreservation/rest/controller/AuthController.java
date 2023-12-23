@@ -1,5 +1,6 @@
 package com.hotelreservation.rest.controller;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.hotelreservation.api.dto.UserDTO;
 import com.hotelreservation.api.request.AddBalanceRequest;
 import com.hotelreservation.api.request.AuthUserRequest;
@@ -18,10 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 //@RestController
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(path = "/auth")
+@RequestMapping("/auth")
 @Slf4j
 @CrossOrigin
 public class AuthController {
@@ -32,37 +35,37 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/login")
+    @GetMapping(path ="/login")
     public String login() {
         return "oldlogin";
     }
 
-    @GetMapping("/register")
+    @GetMapping(path = "/register")
     public String register() {
         return "register";
     }
 
-    //todo add mailsender.
+    //TODO add mailsender.
 
-    @PostMapping("/register")
+    @PostMapping(path = "/register")
     public ResponseEntity<BaseResponse> createUser(@RequestBody @Valid UserAddRequest userAddRequest) throws AuthException {
         userValidator.validateUserRegister(userAddRequest);
         return ResponseEntity.ok(userService.createUser(userAddRequest));
     }
 
-    @PostMapping("/login")
+    @PostMapping(path = "/login")
     public ResponseEntity<AuthUserResponse> loginUser(@RequestBody @Valid AuthUserRequest userLoginRequest) throws AuthException {
         userValidator.authenticationUserLogin(userLoginRequest);
         return ResponseEntity.ok(userService.authUser(userLoginRequest));
     }
 
-    @GetMapping("/{userid}")
+    @GetMapping(path = "/{userid}")
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable @Valid Long userid) {
         log.info("controller is working well , userid : " + userid);
 
         return ResponseEntity.ok(userService.findUserById(userid));
     }
-    @GetMapping("/greeting")
+    @GetMapping(path ="/greeting")
     public @ResponseBody String greeting(){
         return authService.testingSomeThing();
     }

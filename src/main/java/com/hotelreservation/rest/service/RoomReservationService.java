@@ -48,26 +48,10 @@ public class RoomReservationService {
         balanceRepo.setAmount(balanceRepo.getAmount() - room.getPrice());
 
         balanceRepository.save(balanceRepo);
-
-        User user1 = userRepository.findByUsername(request.getMember1());
-        User user2 = userRepository.findByUsername(request.getMember2());
-
-
         room.setIsAvailable("FALSE");
-        ReservationList reservationList1 = new ReservationList();
-        ReservationList reservationList2 = new ReservationList();
+        setReservationList(request); // will set reservationList for details information
 
-        reservationList1.setUserid(user1.getId());
-        reservationList1.setRoomid(room.getId());
-        reservationList1.setCheckin("FALSE");
-        reservationList1.setEntrydate(request.getEntrydate());
-        reservationList1.setDepartdate(request.getDepartdate());
-
-        reservationList2.setUserid(user2.getId());
-        reservationList2.setRoomid(room.getId());
-        reservationList2.setCheckin("FALSE");
-        reservationList2.setEntrydate(request.getEntrydate());
-        reservationList2.setDepartdate(request.getDepartdate());
+        //TODO bu departDate gecenleride direk silip bos olarak ayarlasin yani available true diger degerleri felan null atasin.
 
 
         room.setMember1(request.getMember1());
@@ -87,7 +71,7 @@ public class RoomReservationService {
 
         UserListInRoomsResponse userListInRoomsResponse = new UserListInRoomsResponse();
 
-        //todo use modelmapper
+        //TODO use modelmapper
 
         userListInRoomsResponse.setIsAvailable(room.getIsAvailable());
         userListInRoomsResponse.setFloor(room.getFloor());
@@ -98,4 +82,29 @@ public class RoomReservationService {
         return userListInRoomsResponse;
     }
 
+    public void setReservationList (BuyRoomRequest request){
+        Room room = roomRepository.findRoomById(request.getRoomnumber());
+        User user1 = userRepository.findByUsername(request.getMember1());
+        User user2 = userRepository.findByUsername(request.getMember2());
+
+
+
+        ReservationList reservationList1 = new ReservationList();
+        ReservationList reservationList2 = new ReservationList();
+
+        reservationList1.setUserid(user1.getId());
+        reservationList1.setRoomid(room.getId());
+        reservationList1.setCheckin("FALSE");
+        reservationList1.setEntrydate(request.getEntrydate());
+        reservationList1.setDepartdate(request.getDepartdate());
+
+        reservationList2.setUserid(user2.getId());
+        reservationList2.setRoomid(room.getId());
+        reservationList2.setCheckin("FALSE");
+        reservationList2.setEntrydate(request.getEntrydate());
+        reservationList2.setDepartdate(request.getDepartdate());
+
+        reservationListRepository.save(reservationList1);
+        reservationListRepository.save(reservationList2);
+    }
 }

@@ -5,19 +5,18 @@ import com.hotelreservation.api.request.AddBalanceRequest;
 import com.hotelreservation.api.request.BuyRoomRequest;
 import com.hotelreservation.api.request.ChangeRoleRequest;
 import com.hotelreservation.api.request.UserListInRoomsRequest;
-import com.hotelreservation.api.response.BaseResponse;
-import com.hotelreservation.api.response.BuyRoomResponse;
-import com.hotelreservation.api.response.RoomListResponse;
-import com.hotelreservation.api.response.UserListInRoomsResponse;
+import com.hotelreservation.api.response.*;
 import com.hotelreservation.rest.exception.AuthException;
 import com.hotelreservation.rest.service.AuthService;
 import com.hotelreservation.rest.service.RoomReservationService;
+import com.hotelreservation.rest.service.UserService;
 import com.hotelreservation.rest.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController
@@ -25,8 +24,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UinterfaceController {
     private final AuthService authService;
+
     private final UserValidator userValidator;
+
     private final RoomReservationService roomReservationService;
+
+    private final UserService userService;
+
+
 
 
     @GetMapping("/index")
@@ -64,9 +69,15 @@ public class UinterfaceController {
         userValidator.validateUserBuyRoom(request);
         return ResponseEntity.ok(roomReservationService.buyRoom(request));
     }
-    @PostMapping("/memberListInRooms")
+    @PostMapping(path= "/memberListInRooms")
     public ResponseEntity<UserListInRoomsResponse> getMemberListInRooms(@RequestBody UserListInRoomsRequest request)throws AuthException{
         userValidator.hasAuthority(request);
         return ResponseEntity.ok(roomReservationService.getUserListInRoom(request));
     }
+    /*@GetMapping
+    public ResponseEntity<HttpResponse> confirmUserAccount (@RequestParam("token") String token){
+//        Boolean isSuccess = userService.verifyToken(token);
+        return R
+    }*/
+
 }

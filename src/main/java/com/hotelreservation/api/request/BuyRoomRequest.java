@@ -6,7 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class BuyRoomRequest {
+public class BuyRoomRequest extends BaseRequest{
+
     private String username;
     private String password;
     private Long roomnumber;
