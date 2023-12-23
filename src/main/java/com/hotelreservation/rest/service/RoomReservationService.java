@@ -5,6 +5,7 @@ import com.hotelreservation.api.request.BuyRoomRequest;
 import com.hotelreservation.api.request.UserListInRoomsRequest;
 import com.hotelreservation.api.response.BuyRoomResponse;
 import com.hotelreservation.api.response.UserListInRoomsResponse;
+import com.hotelreservation.auth.JwtService;
 import com.hotelreservation.model.entity.Balance;
 import com.hotelreservation.model.entity.ReservationList;
 import com.hotelreservation.model.entity.Room;
@@ -14,7 +15,6 @@ import com.hotelreservation.repository.ReservationListRepository;
 import com.hotelreservation.repository.RoomRepository;
 import com.hotelreservation.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +32,8 @@ public class RoomReservationService {
     private final UserRepository userRepository;
 
     private final ReservationListRepository reservationListRepository;
+
+    private final JwtService jwtService;
 //    private final ModelMapper modelMapper;
 
 
@@ -40,9 +42,10 @@ public class RoomReservationService {
     }
 
     public BuyRoomResponse buyRoom(BuyRoomRequest request) {
-        User user = userRepository.findByUsername(request.getUsername());
+        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
 
-        Balance balanceRepo = balanceRepository.findByUserIdAndMoneyCode(user.getId(), request.getMoneyCode());
+        Balance balanceRepo = balanceRepository.findByUserId(tokenUser.getId());
+
         Room room = roomRepository.findRoomById(request.getRoomnumber());
 
         balanceRepo.setAmount(balanceRepo.getAmount() - room.getPrice());
@@ -66,7 +69,11 @@ public class RoomReservationService {
     }
 
     public UserListInRoomsResponse getUserListInRoom(UserListInRoomsRequest request){
-        ReservationList reservationList = reservationListRepository.findUserById(request.getUserid());
+        //TODO Check again this method.
+        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
+
+        ReservationList reservationList = reservationListRepository.findUserById(tokenUser.getId());
+
         Room room = roomRepository.findRoomById(reservationList.getRoomid());
 
         UserListInRoomsResponse userListInRoomsResponse = new UserListInRoomsResponse();
@@ -86,8 +93,6 @@ public class RoomReservationService {
         Room room = roomRepository.findRoomById(request.getRoomnumber());
         User user1 = userRepository.findByUsername(request.getMember1());
         User user2 = userRepository.findByUsername(request.getMember2());
-
-
 
         ReservationList reservationList1 = new ReservationList();
         ReservationList reservationList2 = new ReservationList();

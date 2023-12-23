@@ -1,11 +1,11 @@
 package com.hotelreservation.rest.validator;
 
 import com.hotelreservation.api.request.*;
-import com.hotelreservation.api.response.AuthUserResponse;
 import com.hotelreservation.auth.JwtService;
 import com.hotelreservation.lib.constants.Constants;
 import com.hotelreservation.model.Role;
 import com.hotelreservation.model.entity.Balance;
+import com.hotelreservation.model.entity.Room;
 import com.hotelreservation.model.entity.User;
 import com.hotelreservation.repository.BalanceRepository;
 import com.hotelreservation.repository.RoomRepository;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class UserValidator {
-
     private final UserRepository userRepository;
 
     private final BcryptGenerator bcryptGenerator;
@@ -29,13 +28,7 @@ public class UserValidator {
 
     private final BalanceRepository balanceRepository;
 
-    //private final AuthUserResponse authUserResponse;
-    private final AuthUserResponse authUserResponse;
-
-    private AuthUserRequest authUserRequest;
-
     private final JwtService jwtService;
-
 
     public void validateUserRegister(UserAddRequest userAddRequest) throws AuthException {
         if (userRepository.findByEmail(userAddRequest.getUsername()) != null) {
@@ -56,60 +49,40 @@ public class UserValidator {
         }
     }
 
-    public void changeRolePermission(ChangeRoleRequest changeRoleRequest) throws AuthException {
-        jwtService.decryptJwt(authUserResponse.getToken());
-        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(authUserResponse.getToken()));
+    public void getBalance(GetBalanceRequest request) throws AuthException {
+        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
+        //request.getToken().split(" ")[1]
+        Balance balance = balanceRepository.findByUserId(tokenUser.getId());
 
-        log.info("TokenUsers firstname : " + tokenUser.getFirstName() + " , lastName : "+ tokenUser.getLastName()+" , username : "+ tokenUser.getUsername());
-
-        //User tokenUser1 = userRepository.findByUsername(jwtService.extractUsername(authUserResponse.getToken()));
-
-
-        //User tokenUser = userRepository.findByUsername(changeRoleRequest.getAdminUsername());
-        if(jwtService.isTokenValid(authUserResponse.getToken(),tokenUser)){
+        if(jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
             throw new AuthException(Constants.TOKEN_EXPIRED);
-        }
-        else if (userRepository.findByUsername(changeRoleRequest.getAdminUsername()) == null) {
-            throw new AuthException(Constants.ACCESS_DENIED);
-        }
-        else if (userRepository.findByUsername(changeRoleRequest.getAdminUsername()).getRole() != Role.ADMIN) {
+        }else if (balance == null) {
             throw new AuthException(Constants.ACCESS_DENIED);
         }
     }
 
     public void validateUserBuyRoom (BuyRoomRequest request)throws AuthException{
-        String token = jwtService.decryptJwt(request.getToken());
+        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
 
-        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(token));
+        Balance balanceRepo = balanceRepository.findByUserId(tokenUser.getId());
 
-        log.info("TokenUsers firstname : " + tokenUser.getFirstName() + " , lastName : "+ tokenUser.getLastName()+" , username : "+ tokenUser.getUsername());
+        Room roomRepo = roomRepository.findRoomById(request.getRoomnumber());
 
-
-        //log.info("TokenUsers first name : "+ tokenUser.getFirstName()+" , last name : "+tokenUser.getLastName() + " ,email : "+tokenUser.getEmail());
-
-        Balance balanceRepo = balanceRepository.findByUserIdAndMoneyCode(tokenUser.getId(),request.getMoneyCode());
-
-        /*if (!(bcryptGenerator.passwordDecoder(tokenUser.getPassword(), tokenUser.getPassword()))) {
-            throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
-        }*/
-        if (balanceRepo.getAmount() < roomRepository.findById(request.getRoomnumber()).get().getPrice()) {
+        if(!jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
+            throw new AuthException(Constants.TOKEN_EXPIRED);
+        }else if(roomRepo.getIsAvailable().equals("FALSE")){
+            throw new AuthException(Constants.ROOM_IS_NOT_AVAILABLE);
+        }else if (balanceRepo.getAmount() < roomRepository.findById(request.getRoomnumber()).get().getPrice()) {
             throw new AuthException(Constants.INSUFFICIENT_FUNDS);
         }
     }
     public void hasAuthority(UserListInRoomsRequest request)throws AuthException{
-        User user = userRepository.findByUsername(request.getUsername());
+        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
 
-        authUserResponse.setToken(jwtService.decryptJwt(authUserResponse.getToken()));
-        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(authUserResponse.getToken()));
-
-//        User tokenUser = userRepository.findByUsername(jwtService.extractUsername(authUserResponse.getToken()));
-
-        /*if(jwtService.isTokenValid(authUserResponse.getToken(),user)){
+        if(jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
             throw new AuthException(Constants.TOKEN_EXPIRED);
-        }*/if(user.getRole() != Role.MANAGER){
+        }else if(tokenUser.getRole() != Role.MANAGER){
             throw new AuthException(Constants.HAVE_NOT_PERMISSION);
-        }/* else if(userRepository.findByUsername(request.getUsername()) == null){
-            throw new AuthException(Constants.USERNAME_OR_PASSWORD_NOT_MATCHED);
-        }*/
+        }
     }
 }

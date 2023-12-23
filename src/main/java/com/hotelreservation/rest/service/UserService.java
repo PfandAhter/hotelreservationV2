@@ -9,7 +9,6 @@ import com.hotelreservation.auth.JwtService;
 import com.hotelreservation.model.Role;
 import com.hotelreservation.model.entity.User;
 import com.hotelreservation.repository.UserRepository;
-import com.hotelreservation.rest.config.BcryptGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,13 +32,7 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-//    private final AuthUserResponse authUserResponse;
-//    private final AuthToken authToken;
-
-
-
     public BaseResponse createUser(UserAddRequest createUser) {
-        log.info("User saved / updated : " + createUser.getUsername());
         User user = modelMapper.map(createUser, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -49,42 +42,20 @@ public class UserService {
             user.setRole(Role.USER);
         }
         this.userRepository.save(user);
-
-//        String token = jwtService.generateToken(user);
-
-//        return AuthUserResponse.builder()
-//                .token(token)
-//                .build();
-
         return new BaseResponse();
-
     }
     public AuthUserResponse authUser(AuthUserRequest authUserRequest){
-        log.info(String.format("username %s password %s", authUserRequest.getUsername(), authUserRequest.getPassword()));
+//        log.info(String.format("username %s password %s", authUserRequest.getUsername(), authUserRequest.getPassword()));
+        //TODO check if token created before login controller then, use token.
         User user = userRepository.findByUsername(authUserRequest.getUsername());
-
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authUserRequest.getUsername(), authUserRequest.getPassword()));
 
         String token = jwtService.generateToken(user);
-//        authUserResponse.setToken(token);
-//        authUserResponse.getToken();
-
-//        authToken.setToken(token);
-//        authToken.getToken();
-
 
         return AuthUserResponse.builder()
                 .token(token)
                 .build();
-    }
-
-    /*public Boolean verifyToken(String token){
-        User user =
-    }*/
-
-    public UserDTO findUserById(Long userid) {
-        return modelMapper.map(userRepository.findUserById(userid), UserDTO.class);
     }
 }

@@ -28,7 +28,6 @@ public class ApplicationConfiguration {
 
     //beans always should be public.
 
-
     //AuthenticationProvider is the data access object which is responsible to fetch the user details and also encode password
     @Bean
     public AuthenticationProvider authenticationProvider() {

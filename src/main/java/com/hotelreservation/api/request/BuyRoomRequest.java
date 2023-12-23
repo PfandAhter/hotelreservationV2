@@ -8,11 +8,7 @@ import lombok.Setter;
 
 public class BuyRoomRequest extends BaseRequest{
 
-    private String username;
-    private String password;
     private Long roomnumber;
-    private String moneyCode;
-
     private String member1;
     private String member2;
     private String entrydate;

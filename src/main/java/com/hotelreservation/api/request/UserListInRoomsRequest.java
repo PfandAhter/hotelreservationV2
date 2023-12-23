@@ -5,8 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserListInRoomsRequest {
-    private String username;
-    private String password;
+public class UserListInRoomsRequest extends BaseRequest{
     private Long userid;
 }

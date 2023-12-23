@@ -23,6 +23,8 @@ public class Constants {
 
     public static final String SHOPPING_SUCCESSFULL = "SHOPPING SUCCESSFULL";
 
+    public static final String ROOM_IS_NOT_AVAILABLE = "ROOM IS NOT AVAILABLE";
+
     public static final String TOKEN_EXPIRED = "TOKEN EXPIRED";
 
     public static final String JWT_SECRET = "${app.jwtSecret}";
