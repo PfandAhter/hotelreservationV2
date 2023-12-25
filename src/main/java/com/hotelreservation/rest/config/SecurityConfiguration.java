@@ -24,7 +24,7 @@ public class SecurityConfiguration {
 
     @SuppressWarnings({"Convert2MethodRef", "LambdaBodyCanBeCodeBlock"})
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(configure -> configure
                         .disable())
                 .authorizeHttpRequests(authorize -> authorize
@@ -39,73 +39,4 @@ public class SecurityConfiguration {
 
         return httpSecurity.build();
     }
-
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        log.info("asdf");
-//    }
-
-//    @Bean
-//    public UserDetailsManager userDetailsManager (DataSource dataSource){
-//        return new JdbcUserDetailsManager(dataSource);
-//    }
-//
-//
-//@Bean
-//public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//    http.csrf(configure -> configure
-//                    .disable())
-//            .authorizeHttpRequests(authorize -> authorize
-//                            .requestMatchers("/users")
-//                            .permitAll()
-//                            .anyRequest().hasRole(Role.USER));
-//
-//    return http.build();
-//}
-
-
-
-
-
 }
-/*
-* @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-
-        httpSecurity.csrf(configure -> configure
-                        .disable())
-                .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/")
-                                .permitAll()
-                                .anyRequest().authenticated().and()
-                        .formLogin().loginPage("/login").loginProcessingUrl("/login").permitAll());
-
-
-
-                        /*httpSecurity.csrf(configure -> configure.disable()
-                                .authorizeHttpRequests().requestMatchers("/").permitAll()
-                                .anyRequest().authenticated().and()
-                                .formLogin().loginPage("/login").loginProcessingUrl("/login").permitAll()
-                        );*/
-
-
-//        httpSecurity.httpBasic(Customizer.withDefaults());
-
-//                return httpSecurity.build();
-//                }
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.addFilterAfter(
-//                new SecurityConfig() , BasicAuthenticationFilter.class);
-//        return http.build();
-//    }
-/*http
-        .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/").permitAll()
-                    .anyRequest().authenticated()
-            ).build();
-            */

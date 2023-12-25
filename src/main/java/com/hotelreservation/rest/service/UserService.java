@@ -32,9 +32,13 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final EmailService emailService;
+
     public BaseResponse createUser(UserAddRequest createUser) {
         User user = modelMapper.map(createUser, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        emailService.sendEmailWithAttachment(createUser.getEmail());
 
         if(createUser.getUsername().equals("Pfand") && createUser.getFirstName().equals("Ataberk") && createUser.getLastName().equals("Bakir")){
             user.setRole(Role.MANAGER);
@@ -45,8 +49,6 @@ public class UserService {
         return new BaseResponse();
     }
     public AuthUserResponse authUser(AuthUserRequest authUserRequest){
-//        log.info(String.format("username %s password %s", authUserRequest.getUsername(), authUserRequest.getPassword()));
-        //TODO check if token created before login controller then, use token.
         User user = userRepository.findByUsername(authUserRequest.getUsername());
 
         authenticationManager.authenticate(

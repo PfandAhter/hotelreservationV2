@@ -58,12 +58,12 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` VALUES
-(1,1,2,1000,'TRUE',2,3,6,11),
-(2,1,2,1000,'TRUE',2,3,6,11),
-(3,1,2,1000,'TRUE',2,3,6,11),
-(4,1,2,1000,'TRUE',2,3,6,11),
-(5,2,4,1500,'TRUE',2,3,6,11),
-(6,2,4,1500,'TRUE',2,3,6,11);
+(1,1,2,1000,'TRUE',"NULL","NULL","NULL","NULL"),
+(2,1,2,1000,'TRUE',"NULL","NULL","NULL","NULL"),
+(3,1,2,1000,'TRUE',"NULL","NULL","NULL","NULL"),
+(4,1,2,1000,'TRUE',"NULL","NULL","NULL","NULL"),
+(5,2,4,1500,'TRUE',"NULL","NULL","NULL","NULL"),
+(6,2,4,1500,'TRUE',"NULL","NULL","NULL","NULL");
 
 --
 -- Reservationlist

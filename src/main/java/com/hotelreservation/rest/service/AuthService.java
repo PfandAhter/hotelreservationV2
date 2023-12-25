@@ -1,6 +1,7 @@
 package com.hotelreservation.rest.service;
 
 import com.hotelreservation.api.request.AddBalanceRequest;
+import com.hotelreservation.api.request.BaseRequest;
 import com.hotelreservation.api.request.GetBalanceRequest;
 import com.hotelreservation.api.response.BaseResponse;
 import com.hotelreservation.api.response.GetBalanceResponse;
@@ -40,7 +41,7 @@ public class AuthService {
         return new BaseResponse();
     }
 
-    public GetBalanceResponse getBalance(GetBalanceRequest request) {
+    public GetBalanceResponse getBalance(BaseRequest request) {
         User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
 
         Balance balanceRepo = balanceRepository.findByUserId(tokenUser.getId());
@@ -51,24 +52,3 @@ public class AuthService {
         return getBalanceResponse;
     }
 }
-
-/*if (request.getUsername().equals(user.getUsername())) {
-            if (balanceRepo == null) {
-                Balance balance = new Balance();
-                balance.setAmount(request.getAmount());
-                balance.setMoneyCode("TL");
-                balance.setUser(user);
-                balanceRepository.save(balance);
-
-            } else {
-                balanceRepo.setAmount(balanceRepo.getAmount() + request.getAmount());
-                balanceRepository.save(balanceRepo);
-            }
-            userRepository.save(user);
-        } else {
-            BaseResponse baseResponse = new BaseResponse();
-            baseResponse.setErrorCode(Constants.HAVE_NOT_PERMISSION);
-            baseResponse.setErrorDescription(Constants.HAVE_NOT_PERMISSION);
-            return baseResponse;
-        }
-* */

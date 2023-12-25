@@ -1,8 +1,6 @@
 package com.hotelreservation.rest.aspect;
 
-import com.hotelreservation.api.request.AuthUserRequest;
 import com.hotelreservation.api.request.BaseRequest;
-import com.hotelreservation.api.response.AuthUserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,27 +15,40 @@ import org.springframework.stereotype.Component;
 public class GeneralInterceptorAspect {
     private final HttpServletRequest request;
 
-    /*@Pointcut("execution(* com.hotelreservation.rest.controller.AuthController.loginUser(..))")
-    public void settingToken(){
-        log.info("hello world : settingToken is working well...");
-    }*/
-    /*@Before(value = "execution (* com.hotelreservation.rest.controller.AuthController.loginUser(..))")
-    public void testingSomeThing (JoinPoint joinPoint ){
-        baseRequest = new BaseRequest();
-        log.info("Token : ");
-    }*/
-
-//    @AfterReturning(value = "execution(* com.hotelreservation.rest.service.UserService.authUser(..))" , returning = "token" )
-//    public void afterMethodInvoked (AuthUserResponse token){
-//        baseRequest.setToken(token.getToken());
-//        log.info("Token setted in BaseRequest.");
-//    }
     @Before(value = "execution(* com.hotelreservation.rest.controller..*(..)) ")
     public void beforeController (JoinPoint joinPoint){
         Object [] parameters = joinPoint.getArgs();
         for(Object param : parameters){
             if(param instanceof BaseRequest){
                 ((BaseRequest) param).setToken(request.getHeader("Authorization"));
+            }
+        }
+    }
+
+    @Before(value = "execution (* com.hotelreservation.rest.service.UserService.authUser(..))")
+    public void beforeLoginUser(JoinPoint joinPoint){
+        log.info("UserService trying to login");
+    }
+    @After(value = "execution (* com.hotelreservation.rest.service.UserService.authUser(..))")
+    public void afterLoginUser(JoinPoint joinPoint){
+        log.info("UserService login successfully");
+    }
+    @Before(value = "execution (* com.hotelreservation.rest.service.UserService.createUser(..))")
+    public void beforeCreatingUser(JoinPoint joinPoint){
+        log.info("UserService trying to create new user");
+    }
+    @After(value = "execution (* com.hotelreservation.rest.service.UserService.createUser(..))")
+    public void afterCreatingUser(JoinPoint joinPoint){
+        log.info("UserService success creating user");
+    }
+    @AfterThrowing(value =  "execution (* com.hotelreservation.rest.service.UserService.authUser(..))" ,throwing = "exception")
+    public void afterThrowingUserLogin(JoinPoint joinPoint,Exception exception){
+        //TODO learn how to use AfterThrowing... btw it doesn't working
+        Object [] parameters = joinPoint.getArgs();
+        for(Object param : parameters){
+            if(param instanceof Exception){
+                log.info("Login failed for the reason : " + ((Exception) param).getMessage());
+                log.info("Login failed for the reason : " + exception.getMessage());
             }
         }
     }

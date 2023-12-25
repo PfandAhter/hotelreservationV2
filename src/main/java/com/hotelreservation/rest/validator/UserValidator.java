@@ -49,12 +49,12 @@ public class UserValidator {
         }
     }
 
-    public void getBalance(GetBalanceRequest request) throws AuthException {
+    public void getBalance(BaseRequest request) throws AuthException {
         User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
         //request.getToken().split(" ")[1]
         Balance balance = balanceRepository.findByUserId(tokenUser.getId());
 
-        if(jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
+        if(!jwtService.isTokenValid(jwtService.decryptJwt(request.getToken().split(" ")[1]),tokenUser)){
             throw new AuthException(Constants.TOKEN_EXPIRED);
         }else if (balance == null) {
             throw new AuthException(Constants.ACCESS_DENIED);
@@ -68,7 +68,7 @@ public class UserValidator {
 
         Room roomRepo = roomRepository.findRoomById(request.getRoomnumber());
 
-        if(!jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
+        if(!jwtService.isTokenValid(jwtService.decryptJwt(request.getToken().split(" ")[1]),tokenUser)){
             throw new AuthException(Constants.TOKEN_EXPIRED);
         }else if(roomRepo.getIsAvailable().equals("FALSE")){
             throw new AuthException(Constants.ROOM_IS_NOT_AVAILABLE);
@@ -76,10 +76,10 @@ public class UserValidator {
             throw new AuthException(Constants.INSUFFICIENT_FUNDS);
         }
     }
-    public void hasAuthority(UserListInRoomsRequest request)throws AuthException{
+    public void hasAuthority(BaseRequest request)throws AuthException{
         User tokenUser = userRepository.findByUsername(jwtService.extractUsername(jwtService.decryptJwt(request.getToken().split(" ")[1])));
 
-        if(jwtService.isTokenValid(request.getToken().split(" ")[1],tokenUser)){
+        if(!jwtService.isTokenValid(jwtService.decryptJwt(request.getToken().split(" ")[1]),tokenUser)){
             throw new AuthException(Constants.TOKEN_EXPIRED);
         }else if(tokenUser.getRole() != Role.MANAGER){
             throw new AuthException(Constants.HAVE_NOT_PERMISSION);

@@ -26,7 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    //TODO WELL FUCKING DONE BRO YOU DOING WELL........................
     //https://www.baeldung.com/spring-exclude-filter
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
@@ -40,11 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-//        final String path = request.getRequestURI();
-//        if("/auth/login".equals(path)){
-//            filterChain.doFilter(request,response);
-//            return;
-//        }
         final String authHeader = request.getHeader("Authorization");
         String jwt = "";
         final String username;

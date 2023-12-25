@@ -8,8 +8,10 @@ import com.hotelreservation.rest.exception.AuthException;
 import com.hotelreservation.rest.service.UserService;
 import com.hotelreservation.rest.validator.UserValidator;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,22 +31,23 @@ public class AuthController {
     public String login() {
         return "oldlogin";
     }
-
     @GetMapping(path = "/register")
     public String register() {
         return "register";
     }
 
-    //TODO add mailsender.
-
     @PostMapping(path = "/register")
-    public ResponseEntity<BaseResponse> createUser(@RequestBody @Valid UserAddRequest userAddRequest) throws AuthException {
+    public ResponseEntity<BaseResponse> createUser(
+            @NonNull @RequestBody @Valid UserAddRequest userAddRequest) throws AuthException {
         userValidator.validateUserRegister(userAddRequest);
         return ResponseEntity.ok(userService.createUser(userAddRequest));
     }
+
     @PostMapping(path = "/login")
-    public ResponseEntity<AuthUserResponse> loginUser(@RequestBody @Valid AuthUserRequest userLoginRequest) throws AuthException {
+    public ResponseEntity<AuthUserResponse> loginUser(
+            @NonNull @RequestBody @Valid AuthUserRequest userLoginRequest) throws AuthException {
         userValidator.authenticationUserLogin(userLoginRequest);
         return ResponseEntity.ok(userService.authUser(userLoginRequest));
     }
+
 }

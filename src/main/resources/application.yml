@@ -1,4 +1,15 @@
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:  #Google mail , google account 2nd authentication must opened..
+    password:  #Google app password
+    properties:
+      mail:
+        smpt:
+          auth: true
+          starttls:
+            enable: true
   thymeleaf:
     check-template-location: false
   profiles:
@@ -31,7 +42,7 @@ app:
 #    feignClient:
 #      name: UserServiceClient
 #      url:
-#logging:
-#  level:
-#    org.springframework: DEBUG
+logging:
+  level:
+    org.springframework: DEBUG
 
